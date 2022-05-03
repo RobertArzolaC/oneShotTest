@@ -37,7 +37,7 @@ def show_upload_file_form(code):
         upload_data = form.upload.data
         service = OneShot()
         response = service.upload_file(code, upload_data)
-        if response['details']:
+        if "200" in response['status']:
             document_id = response['details']
             return redirect(url_for('show_register_otp_form', code=code, document_id=document_id))
     return render_template("upload_file_otp.html", form=form)
@@ -51,4 +51,5 @@ def show_register_otp_form(code, document_id):
         service = OneShot()
         service.build_payload_otp(otp, document_id)
         result = service.send_otp(code)
+        return result['details']
     return render_template("register_otp.html", form=form)

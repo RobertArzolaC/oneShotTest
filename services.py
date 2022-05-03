@@ -45,16 +45,10 @@ class OneShot:
 
     def upload_file(self, code, upload_data):
         url = f"{self.url_otp_file}{code}"
-        files = [
-            ('file', upload_data)
-        ]
-        payload = {
-            "file": upload_data.filename
+        files = {
+            'file': upload_data.stream._file
         }
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-        response = requests.post(url, headers=headers, files=files, data=payload)
+        response = requests.post(url, files=files)
         return response.json()
 
     def get_otp(self, code):
