@@ -9,9 +9,16 @@
             {% endfor %}
         </div>
         <div>
-            {{ form.last_name.label }}
-            {{ form.last_name(size=200) }}<br>
-            {% for error in form.last_name.errors %}
+            {{ form.surname_1.label }}
+            {{ form.surname_1(size=20) }}<br>
+            {% for error in form.surname_1.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.surname_2.label }}
+            {{ form.surname_2(size=20) }}<br>
+            {% for error in form.surname_2.errors %}
                 <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </div>

@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 
 from forms import SignupForm
+from services import OneShot
 
 
 app = Flask(__name__)
@@ -12,8 +13,13 @@ def show_signup_form():
     form = SignupForm()
     if form.validate_on_submit():
         name = form.name.data
-        last_name = form.last_name.data
+        surname_1 = form.surname_1.data
+        surname_2 = form.surname_2.data
         email = form.email.data
         phone = form.phone.data
-        print(name, last_name, email, phone)
+
+        service = OneShot()
+        service.build_payload(name, surname_1, surname_2, email, phone)
+        response = service.send_data()
+        print(response)
     return render_template("signup_form.html", form=form)
