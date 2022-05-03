@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, FileField
 from wtforms.validators import DataRequired, Email, Length
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 
 class SignupForm(FlaskForm):
@@ -18,5 +19,23 @@ class SignupForm(FlaskForm):
     )
     phone = StringField(
         'Teléfono', validators=[DataRequired(), Length(max=9)]
+    )
+    submit = SubmitField('Registrar')
+
+
+class OtpFileForm(FlaskForm):
+    upload = FileField(
+        'Document OTP', 
+        validators=[
+            FileRequired(),
+            FileAllowed(["pdf"], "Solo se aceptan archivos PDF")
+        ]
+    )
+    submit = SubmitField('Enviar')
+
+
+class OtpForm(FlaskForm):
+    otp = StringField(
+        'Código OTP', validators=[DataRequired(), Length(max=6)]
     )
     submit = SubmitField('Registrar')

@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, request
 
-from forms import SignupForm
+from forms import OtpFileForm, SignupForm, OtpForm
 from services import OneShot
 
 
@@ -20,6 +20,35 @@ def show_signup_form():
 
         service = OneShot()
         service.build_payload(name, surname_1, surname_2, email, phone)
-        response = service.send_data()
-        print(response)
+        data_json = service.send_data()
+        code = data_json['details']
+        print("code: ", code)
+        result = service.get_otp(code)
+
+        if 'generated' in result['details']:
+            return redirect(url_for('show_upload_file_form', code=code))
     return render_template("signup_form.html", form=form)
+
+
+@app.route("/upload-otp-file/<code>/", methods=["GET", "POST"])
+def show_upload_file_form(code):
+    form = OtpFileForm()
+    if form.validate_on_submit():
+        upload_data = form.upload.data
+        service = OneShot()
+        response = service.upload_file(code, upload_data)
+        if response['details']:
+            document_id = response['details']
+            return redirect(url_for('show_register_otp_form', code=code, document_id=document_id))
+    return render_template("upload_file_otp.html", form=form)
+
+
+@app.route("/register-otp/<code>/<document_id>", methods=["GET", "POST"])
+def show_register_otp_form(code, document_id):
+    form = OtpForm()
+    if form.validate_on_submit():
+        otp = form.otp.data
+        service = OneShot()
+        service.build_payload_otp(otp, document_id)
+        result = service.send_otp(code)
+    return render_template("register_otp.html", form=form)
