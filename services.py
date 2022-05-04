@@ -6,6 +6,7 @@ class OneShot:
     url_otp = "https://one-shot.developers.uanataca.com/api/v1/otp/"
     url_sign_otp = "https://one-shot.developers.uanataca.com/api/v1/sign/"
     url_otp_file = "https://one-shot.developers.uanataca.com/api/v1/document/"
+    url_otp_download = "https://one-shot.developers.uanataca.com/api/v1/document/%s/signed/%s"
     def __init__(self):
         self.payload = {
             'env' :  'test' ,
@@ -16,7 +17,6 @@ class OneShot:
             'id_document_type': 'IDC',
             'id_document_country': 'ES',
             'serial_number': '12345678A',
-            'email': 'jimy171@gmail.com',
             'registration_authority': '759',
             'billing_password' :  'YWlkZWFydHVyMDE=',
             'billing_username' :  'jimysanchez@bit4id.pe'
@@ -24,6 +24,7 @@ class OneShot:
         self.headers = {
           'Content-Type': 'application/json'
         }
+        self.default_response = {}
         self.payload_otp = dict(options={})
 
     def build_payload(self, name, surname_1, surname_2, email, phone):
@@ -58,9 +59,16 @@ class OneShot:
         
     def send_data(self):
         response = requests.post(self.url, headers=self.headers, json=self.payload)
-        return response.json()
+        if response.ok:
+            return response.json()
+        return self.default_response
 
     def send_otp(self, otp):
         url = f"{self.url_sign_otp}{otp}"
         response = requests.post(url, headers=self.headers, json=self.payload_otp)
-        return response.json()
+        if response.ok:
+            return response.json()
+        return self.default_response
+
+    def get_download_file_url(self, code, document_id):
+        return self.url_otp_download % (code, document_id)

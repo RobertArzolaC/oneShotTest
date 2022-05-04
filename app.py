@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for
 
 from forms import OtpFileForm, SignupForm, OtpForm
 from services import OneShot
@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '7110c8ae51a4b5af97be6534caef90e4bb9bdcb3380af008f90b23a5d1616bf319bc298105da20fe'
 
 
-@app.route("/signup/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def show_signup_form():
     form = SignupForm()
     if form.validate_on_submit():
@@ -21,10 +21,11 @@ def show_signup_form():
         service = OneShot()
         service.build_payload(name, surname_1, surname_2, email, phone)
         data_json = service.send_data()
-        code = data_json['details']
-        print("code: ", code)
-        result = service.get_otp(code)
+        if not data_json:
+            return "Se encontrarón problemas en el servidor al enviar los datos"
 
+        code = data_json['details']
+        result = service.get_otp(code)
         if 'generated' in result['details']:
             return redirect(url_for('show_upload_file_form', code=code))
     return render_template("signup_form.html", form=form)
@@ -51,5 +52,13 @@ def show_register_otp_form(code, document_id):
         service = OneShot()
         service.build_payload_otp(otp, document_id)
         result = service.send_otp(code)
-        return result['details']
+        if "200" in result['status']:
+            return redirect(url_for('show_download_otp_form', code=code, document_id=document_id))
     return render_template("register_otp.html", form=form)
+
+
+@app.route("/download-otp/<code>/<document_id>", methods=["GET", "POST"])
+def show_download_otp_form(code, document_id):
+    service = OneShot()
+    url_dowload_file = service.get_download_file_url(code, document_id)
+    return render_template("download_otp.html", link_file=url_dowload_file)
