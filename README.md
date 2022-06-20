@@ -1,9 +1,9 @@
 # Proyecto Base para Formulario
 
 ## Primero clonar proyecto
-    
+
 ```bash
-    git clone git@github.com:RobertArzolaC/oneShotTest.git
+    git clone https://github.com/RobertArzolaC/oneShotTest.git
 ```
 
 ## Crear entorno virtual de python e instalar dependencias

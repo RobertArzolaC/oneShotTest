@@ -1,3 +1,4 @@
 Flask-WTF==1.0.1
 email-validator==1.2.1
 requests==2.27.1
+Flask-Bootstrap==3.3.7.1
