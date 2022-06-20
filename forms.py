@@ -1,41 +1,48 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField
+from wtforms import StringField, SubmitField, FileField, PasswordField
 from wtforms.validators import DataRequired, Email, Length
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 
-class SignupForm(FlaskForm):
-    name = StringField(
-        'Nombre', validators=[DataRequired(), Length(max=24)]
+class SignInForm(FlaskForm):
+    username = StringField(
+        "Username", validators=[DataRequired(), Length(max=50)]
     )
+    password = PasswordField(
+        "Password", validators=[DataRequired(), Length(max=50)]
+    )
+    submit = SubmitField("Registrar")
+
+
+class SetCodeForm(FlaskForm):
+    code = StringField("Pin", validators=[DataRequired(), Length(max=50)])
+    submit = SubmitField("Registrar")
+
+
+class SignupForm(FlaskForm):
+    name = StringField("Nombre", validators=[DataRequired(), Length(max=24)])
     surname_1 = StringField(
-        'Apellido Paterno', validators=[DataRequired(), Length(max=20)]
+        "Apellido Paterno", validators=[DataRequired(), Length(max=20)]
     )
     surname_2 = StringField(
-        'Apellido Materno', validators=[DataRequired(), Length(max=20)]
+        "Apellido Materno", validators=[DataRequired(), Length(max=20)]
     )
-    email = StringField(
-        'Email', validators=[DataRequired(), Email()]
-    )
-    phone = StringField(
-        'Teléfono', validators=[DataRequired(), Length(max=9)]
-    )
-    submit = SubmitField('Registrar')
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    phone = StringField("Teléfono", validators=[DataRequired(), Length(max=9)])
+    submit = SubmitField("Registrar")
 
 
 class OtpFileForm(FlaskForm):
     upload = FileField(
-        'Document OTP', 
+        "Document OTP",
         validators=[
             FileRequired(),
-            FileAllowed(["pdf"], "Solo se aceptan archivos PDF")
-        ]
+            FileAllowed(["pdf"], "Solo se aceptan archivos PDF"),
+        ],
     )
-    submit = SubmitField('Enviar')
+    submit = SubmitField("Enviar")
 
 
 class OtpForm(FlaskForm):
-    otp = StringField(
-        'Código OTP', validators=[DataRequired(), Length(max=6)]
-    )
-    submit = SubmitField('Registrar')
+    otp = StringField("Código OTP", validators=[DataRequired(), Length(max=6)])
+    submit = SubmitField("Registrar")
